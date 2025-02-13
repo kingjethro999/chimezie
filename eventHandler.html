@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Event Management</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .form-container {
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 20px;
+      background-color: #f9f9f9;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .success-alert {
+      display: none;
+      margin-bottom: 20px;
+      padding: 10px;
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+      border-radius: 4px;
+    }
+    .success-alert.show {
+      display: block;
+    }
+    .file-upload {
+      position: relative;
+      overflow: hidden;
+      margin: 10px 0;
+    }
+    .file-upload input[type="file"] {
+      position: absolute;
+      top: 0;
+      right: 0;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%;
+      height: 100%;
+    }
+    .file-upload label {
+      display: inline-block;
+      padding: 8px 16px;
+      background-color: white;
+      color: #333;
+      border: 1px solid #ced4da;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .file-upload label:hover {
+      background-color: #ffebeb;
+      border-color: #dc3545;
+    }
+    .dropdown-check-list {
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        padding: 8px;
+        margin-top: 5px;
+    }
+    .dropdown-check-list .items {
+        padding: 10px;
+        background-color: white;
+    }
+  </style>
+</head>
+<body>
+<div class="form-container">
+  <h2 class="text-center mb-4">Event Management</h2>
+  <!-- Success Alert -->
+  <div id="successAlert" class="success-alert">
+    Event successfully created!
+  </div>
+  <!-- Form -->
+  <form id="eventForm" class="row g-3">
+    <!-- Event Name -->
+    <div class="col-md-6">
+      <label for="eventName" class="form-label">Event Name</label>
+      <input type="text" id="eventName" name="eventName" class="form-control" required>
+    </div>
+    <!-- Event Type -->
+    <div class="col-md-6">
+      <label for="eventType" class="form-label">Event Type</label>
+      <select id="eventType" name="eventType" class="form-select" required>
+        <option value="">Select Event Type</option>
+        <option value="school">School Event</option>
+        <option value="department">Department Event</option>
+        <option value="student">Student Event</option>
+      </select>
+    </div>
+    <!-- Department (Dropdown with Checkboxes) -->
+    <div class="col-md-6">
+        <label class="form-label">Departments</label>
+        <button class="form-control text-start" type="button" data-bs-toggle="collapse" data-bs-target="#departmentCollapse" aria-expanded="false">
+            Select Departments 
+        </button>
+        <div class="collapse dropdown-check-list" id="departmentCollapse">
+            <div class="items">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="departmentCS" name="department" value="CS">
+                    <label class="form-check-label" for="departmentCS">Computer Science</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="departmentMC" name="department" value="MC">
+                    <label class="form-check-label" for="departmentMC">Mass Communication</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="departmentBUS" name="department" value="BUS">
+                    <label class="form-check-label" for="departmentBUS">Business</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="departmentPSY" name="department" value="PSY">
+                    <label class="form-check-label" for="departmentPSY">Psychology</label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Semester (Dropdown with Checkboxes) -->
+    <div class="col-md-6">
+        <label class="form-label">Semesters</label>
+        <button class="form-control text-start" type="button" data-bs-toggle="collapse" data-bs-target="#semesterCollapse" aria-expanded="false">
+            Select Semesters 
+        </button>
+        <div class="collapse dropdown-check-list" id="semesterCollapse">
+            <div class="items">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="semester1" name="semester" value="1">
+                    <label class="form-check-label" for="semester1">1st Semester</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="semester2" name="semester" value="2">
+                    <label class="form-check-label" for="semester2">2nd Semester</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="semester3" name="semester" value="3">
+                    <label class="form-check-label" for="semester3">3rd Semester</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="semester4" name="semester" value="4">
+                    <label class="form-check-label" for="semester4">4th Semester</label>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Date -->
+    <div class="col-md-6">
+      <label for="date" class="form-label">Date</label>
+      <input type="date" id="date" name="date" class="form-control" required>
+    </div>
+    <!-- Time -->
+    <div class="col-md-6">
+      <label for="time" class="form-label">Time</label>
+      <input type="time" id="time" name="time" class="form-control" required>
+    </div>
+    <!-- Location -->
+    <div class="col-md-6">
+      <label for="location" class="form-label">Location</label>
+      <input type="text" id="location" name="location" class="form-control" required>
+    </div>
+    <!-- Organizer -->
+    <div class="col-md-6">
+      <label for="organizer" class="form-label">Organizer</label>
+      <input type="text" id="organizer" name="organizer" class="form-control" required>
+    </div>
+    <!-- Description -->
+    <div class="col-12">
+      <label for="description" class="form-label">Description</label>
+      <textarea id="description" name="description" class="form-control" rows="4" required></textarea>
+    </div>
+    <!-- Image Upload -->
+    <div class="col-12 file-upload" style="width: fit-content;">
+      <label for="image" class="btn btn-light">Upload Event Image</label>
+      <input type="file" id="image" name="image" accept="image/*">
+    </div>
+    <!-- Submit Button -->
+    <div class="col-12 text-center">
+      <button type="submit" class="btn btn-danger">Create Event</button>
+    </div>
+  </form>
+</div>
+<!-- Bootstrap JS and Popper.js -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  // Get form elements
+  const form = document.getElementById('eventForm');
+  const successAlert = document.getElementById('successAlert');
+
+  // Handle form submission
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    // Collect form data
+    const formData = new FormData(form);
+
+    // Convert dropdown selections into arrays
+    const departments = Array.from(
+      formData.getAll('department')
+    ).filter(Boolean); // Remove empty values
+    const semesters = Array.from(
+      formData.getAll('semester')
+    ).filter(Boolean); // Remove empty values
+
+    // Create a structured object for logging or sending to the server
+    const eventData = {
+      eventName: formData.get('eventName'),
+      eventType: formData.get('eventType'),
+      departments: departments,
+      semesters: semesters,
+      date: formData.get('date'),
+      time: formData.get('time'),
+      location: formData.get('location'),
+      organizer: formData.get('organizer'),
+      description: formData.get('description'),
+      image: formData.get('image') ? formData.get('image').name : 'No image uploaded'
+    };
+
+    // Log event data (or send it to the server)
+    console.log('Event Data:', eventData);
+
+    // Show success alert
+    successAlert.classList.add('show');
+
+    // Reset form after 3 seconds
+    setTimeout(() => {
+      successAlert.classList.remove('show');
+      form.reset();
+    }, 3000);
+  });
+</script>
+</body>
+</html>
