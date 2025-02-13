@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School Dashboard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="./css/style.css">
+    <style>
+        .search-section {
+            background-color: #f8f9fa;
+            padding: 2rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+        }
+        
+        .table-responsive {
+            background: white;
+            padding: 1rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .nav-pills .nav-link.active {
+            background-color: #0d6efd;
+        }
+        
+        .nav-pills .nav-link {
+            color: #333;
+        }
+        
+        .nav-link:focus {
+            outline: 2px solid #0d6efd;
+            outline-offset: 2px;
+        }
+        
+        .table > :not(caption) > * > * {
+            padding: 1rem;
+        }
+        
+        .badge {
+            font-size: 0.85em;
+            padding: 0.5em 1em;
+        }
+        
+        .department-badge {
+            background-color: #cfe2ff;
+            color: #084298;
+        }
+        
+        .semester-badge {
+            background-color: #f8d7da;
+            color: #dc3545;
+        }
+        
+        .school-badge {
+            background-color: #d1e7dd;
+            color: #198754;
+        }
+
+        
+
+
+
+.nav-pills .nav-link:hover {
+    background-color: rgba(200, 21, 27, 0.05);
+    color: #c8151b;  /* Lincoln red */
+}
+
+/* Active/clicked state */
+.nav-pills .nav-link.active {
+    background-color: #c8151b !important;  /* Lincoln red */
+    color: #ffffff !important;  /* White text */
+}
+
+/* Focus state */
+.nav-link:focus {
+    outline: 2px solid #c8151b;  /* Lincoln red */
+    outline-offset: 2px;
+}
+/* Responsive layout adjustments */
+:root {
+    --sidebar-width: 230px;
+    --header-height: 60px;
+}
+
+/* Mobile sidebar */
+@media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+        position: fixed;
+        width: 100% !important;
+        max-width: 300px;
+    }
+
+    .sidebar.active {
+        transform: translateX(0);
+    }
+
+    .main-content {
+        margin-left: 0 !important;
+        width: 100% !important;
+    }
+
+    header {
+        width: 100% !important;
+    }
+
+    .mobile-toggle {
+        display: block !important;
+    }
+
+    .sidebar-overlay.active {
+        display: block;
+        background: rgba(0, 0, 0, 0.5);
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        z-index: 9999;
+    }
+}
+
+/* Table responsiveness */
+@media (max-width: 768px) {
+    .table-responsive {
+        margin: 0 -15px;
+        padding: 15px;
+        border-radius: 0;
+    }
+
+    /* Stack badges on mobile */
+    .badge {
+        display: inline-block;
+        margin-bottom: 0.25rem;
+    }
+
+    /* Adjust search section padding */
+    .search-section {
+        padding: 1rem;
+    }
+}
+
+/* Event cards responsiveness */
+@media (max-width: 576px) {
+    .card {
+        margin: 0 -15px;
+        border-radius: 0;
+    }
+
+    .card-body {
+        padding: 1rem;
+    }
+
+    .row.g-4 {
+        margin: 0;
+    }
+
+    .col-md-4 {
+        padding: 0;
+    }
+}
+
+/* Navigation pills responsiveness */
+@media (max-width: 576px) {
+    .nav-pills {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding-bottom: 5px;
+    }
+
+    .nav-pills .nav-item {
+        flex: 0 0 auto;
+    }
+
+    .nav-pills .nav-link {
+        white-space: nowrap;
+        padding: 8px 12px;
+    }
+}
+
+/* Marquee container */
+.marquee-container {
+    position: relative;
+    overflow: hidden;
+    padding: 20px 0;
+}
+
+.marquee-wrapper {
+    display: flex;
+    animation: scroll 30s linear infinite;
+    gap: 20px;
+    width: max-content; /* Ensures all cards stay in a row */
+}
+
+/* Pause animation on hover */
+.marquee-wrapper:hover {
+    animation-play-state: paused;
+}
+
+/* Card styling */
+.event-card {
+    flex: 0 0 300px; /* Fixed width for each card */
+    margin-right: 20px;
+}
+
+@keyframes scroll {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(calc(-300px * 5)); /* Adjust based on number of cards */
+    }
+}
+
+/* Card hover effects */
+.event-card {
+    flex: 0 0 300px;
+    margin-right: 20px;
+    transition: all 0.3s ease;
+    z-index: 1;
+}
+
+.event-card .card {
+    transform-origin: center;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.event-card:hover .card {
+    transform: scale(1.1);
+    box-shadow: 0 12px 24px rgba(200, 21, 27, 0.15);
+    z-index: 2;
+}
+
+/* Enhance the background contrast when card is hovered */
+.event-card:hover .card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: inherit;
+    pointer-events: none;
+}
+
+/* Smooth transitions for inner elements */
+.card-body {
+    transition: all 0.3s ease;
+}
+
+.event-card:hover .btn-primary {
+    background-color: #c8151b;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(200, 21, 27, 0.2);
+}
+
+/* Keep the marquee animation */
+.marquee-wrapper {
+    display: flex;
+    animation: scroll 30s linear infinite;
+    gap: 20px;
+    width: max-content;
+    padding: 20px 0; /* Add padding to accommodate scale effect */
+}
+
+.marquee-wrapper:hover {
+    animation-play-state: paused;
+}
+
+@keyframes scroll {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(calc(-300px * 5));
+    }
+}
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar position-fixed h-100 bg-white border-end d-flex flex-column" style="width: var(--sidebar-width); z-index: 10000;">
+            
+            <div class="d-flex align-items-center justify-content-center"
+                style="height: 60px;">
+                <img src="./img/upscaled_lincoln.jpg" class="img-fluid p-2 h-auto"
+                    style="max-height: 70px; object-fit: contain;">
+            </div>
+
+            <button class="close-sidebar btn border-0 position-absolute top-0 end-0 m-3">
+                <i class="fas fa-times"></i>
+            </button>
+
+            <nav class="p-3">
+                <a href="#" class="d-flex align-items-center text-decoration-none text-dark rounded p-2 mb-3 nav-link">
+                    <i class="fas fa-clock me-3 text-center" style="width: 20px;"></i>View Timetables
+                </a>
+                <a href="#" class="d-flex align-items-center text-decoration-none text-dark rounded p-2 mb-3 nav-link">
+                    <i class="fas fa-graduation-cap me-3 text-center" style="width: 20px;"></i>Check Results
+                </a>
+                <a href="#" class="d-flex align-items-center text-decoration-none text-dark rounded p-2 mb-3 nav-link">
+                    <i class="fas fa-money-bill me-3 text-center" style="width: 20px;"></i>Make Payments
+                </a>
+                <a href="#" class="d-flex align-items-center text-decoration-none text-dark rounded p-2 mb-3 nav-link">
+                    <i class="fas fa-chalkboard-teacher me-3 text-center" style="width: 20px;"></i>Book Private Tutoring
+                </a>
+                <a href="#" class="d-flex align-items-center text-decoration-none text-dark rounded p-2 mb-3 nav-link">
+                    <i class="fas fa-video me-3 text-center" style="width: 20px;"></i>Virtual Classes
+                </a>
+                <a href="/LUC-events/Events.html" class="d-flex align-items-center bg-gray-50 text-decoration-none rounded p-2 mb-3 nav-link active">
+                    <i class="fas fa-calendar-alt me-3 text-center" style="width: 20px;"></i>Event Reminders
+                </a>
+                <a href="#" class="d-flex align-items-center text-decoration-none text-dark rounded p-2 mb-3 nav-link">
+                    <i class="fas fa-address-book me-3 text-center" style="width: 20px;"></i>School Contact
+                </a>
+            </nav>
+
+            <div class="p-3 mt-auto">
+                <a href="#" class="d-flex align-items-center text-decoration-none text-dark rounded p-2 nav-link">
+                    <i class="fas fa-sign-out-alt me-3 text-center" style="width: 20px;"></i>Logout
+                </a>
+            </div>
+        </aside>
+
+        <!-- Sidebar Overlay do not touch -->
+        <div class="sidebar-overlay"></div>
+
+        <!-- Main Content Area -->
+        <div class="main-content">
+            <!-- Header -->
+            <header class="position-fixed bg-white border-bottom d-flex align-items-center px-3"
+                style="height: var(--header-height); width: calc(100% - var(--sidebar-width)); z-index: 999;">
+                <div class="container-fluid">
+                    <div class="row align-items-center">
+                        <div class="col d-flex align-items-center">
+                            <button class="btn border-0 p-0 d-flex mobile-toggle d-none me-2">
+                                <i class="fas fa-bars"></i>
+                            </button>
+                        </div>
+                        <div class="col-6 col-md-8 text-center">
+                            <input type="text" class="form-control mx-auto rounded-pill" placeholder="Search..."
+                                style="max-width: 500px;">
+                        </div>
+                        <div class="col d-flex justify-content-end">
+                            <div class="rounded-circle ms-3"
+                                style="width: 40px; height: 40px; background-color: var(--primary-color);"></div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Main Content -->
+            <main class="p-3 mt-5">
+                <!-- Your main content goes here -->
+                 <div class="col">
+                    <div class="container-fluid py-4">
+                        <h2 class="mb-4">School Activities & Events</h2>
+                        
+                        <div class="search-section">
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <input type="text" class="form-control" id="eventSearch" placeholder="Search events..." aria-label="Search events">
+                                </div>
+                                <div class="col-md-3">
+                                    <select class="form-select" id="departmentFilter" aria-label="Filter by department">
+                                        <option value="">All Departments</option>
+                                        <option value="CS">Computer Science</option>
+                                        <option value="MC">Mass Communication</option>
+                                        <option value="BUS">Business</option>
+                                        <option value="PSY">Psychology</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <select class="form-select" id="semesterFilter" aria-label="Filter by semester">
+                                        <option value="">All Semesters</option>
+                                        <option value="1">1st Semester</option>
+                                        <option value="2">2nd Semester</option>
+                                        <option value="3">3rd Semester</option>
+                                        <option value="4">4th Semester</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <button class="btn btn-danger w-100" onclick="filterEvents()">Search</button>
+                                </div>
+                            </div>
+                        </div>
+                
+                        <ul class="nav nav-pills mt-4" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <a class="nav-link active" id="schoolEvents-tab" data-bs-toggle="pill" href="#schoolEvents" role="tab" aria-controls="schoolEvents" aria-selected="true">School Events</a>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <a class="nav-link" id="departmentEvents-tab" data-bs-toggle="pill" href="#departmentEvents" role="tab" aria-controls="departmentEvents" aria-selected="false">Department Events</a>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <a class="nav-link" id="studentEvents-tab" data-bs-toggle="pill" href="#studentEvents" role="tab" aria-controls="studentEvents" aria-selected="false">Student Events</a>
+                            </li>
+                        </ul>
+                
+                        <div class="tab-content">
+                            <!-- School Events -->
+                            <div class="tab-pane fade show active" id="schoolEvents" role="tabpanel" aria-labelledby="schoolEvents-tab">
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Date</th>
+                                                <th>Event Name</th>
+                                                <th>Description</th>
+                                                <th>Location</th>
+                                                <th>Type</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>15 Feb 2025</td>
+                                                <td>Annual Tech Conference</td>
+                                                <td>University-wide technology showcase</td>
+                                                <td>Main Auditorium</td>
+                                                <td><span class="badge school-badge">School Event</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>22 Mar 2025</td>
+                                                <td>Research Symposium</td>
+                                                <td>Presentation of research findings</td>
+                                                <td>Conference Hall</td>
+                                                <td><span class="badge school-badge">School Event</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>10 Apr 2025</td>
+                                                <td>Spring Cultural Festival</td>
+                                                <td>Annual cultural celebration</td>
+                                                <td>Campus Grounds</td>
+                                                <td><span class="badge school-badge">School Event</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>15 May 2025</td>
+                                                <td>Graduation Ceremony</td>
+                                                <td>Class of 2025 Graduation</td>
+                                                <td>Main Stadium</td>
+                                                <td><span class="badge school-badge">School Event</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>20 Jun 2025</td>
+                                                <td>Alumni Reunion</td>
+                                                <td>Annual alumni gathering</td>
+                                                <td>Grand Hall</td>
+                                                <td><span class="badge school-badge">School Event</span></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                
+                            <!-- Department Events -->
+                            <div class="tab-pane fade" id="departmentEvents" role="tabpanel" aria-labelledby="departmentEvents-tab">
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Date</th>
+                                                <th>Department</th>
+                                                <th>Event Name</th>
+                                                <th>Semester</th>
+                                                <th>Description</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <!-- [Previous Department Events content remains the same] -->
+                                            <!-- Computer Science Events -->
+                                            <tr>
+                                                <td>20 Jan 2025</td>
+                                                <td><span class="badge department-badge">Computer Science</span></td>
+                                                <td>AI Workshop Series</td>
+                                                <td><span class="badge semester-badge">1st Semester</span></td>
+                                                <td>Advanced AI and Machine Learning Workshop</td>
+                                            </tr>
+                                            <!-- [Rest of the Department Events remain the same] -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                
+                            <!-- Student Events -->
+                            <div class="tab-pane fade" id="studentEvents" role="tabpanel" aria-labelledby="studentEvents-tab">
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Date</th>
+                                                <th>Event Name</th>
+                                                <th>Department</th>
+                                                <th>Semester</th>
+                                                <th>Organizer</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>25 Jan 2025</td>
+                                                <td>Student Tech Fair</td>
+                                                <td><span class="badge department-badge">Computer Science</span></td>
+                                                <td><span class="badge semester-badge">1st Semester</span></td>
+                                                <td>CS Student Council</td>
+                                            </tr>
+                                            <tr>
+                                                <td>15 Feb 2025</td>
+                                                <td>Media Day</td>
+                                                <td><span class="badge department-badge">Mass Communication</span></td>
+                                                <td><span class="badge semester-badge">1st Semester</span></td>
+                                                <td>Media Club</td>
+                                            </tr>
+                                            <tr>
+                                                <td>10 Mar 2025</td>
+                                                <td>Business Plan Competition</td>
+                                                <td><span class="badge department-badge">Business</span></td>
+                                                <td><span class="badge semester-badge">2nd Semester</span></td>
+                                                <td>Entrepreneurship Society</td>
+                                            </tr>
+                                            <tr>
+                                                <td>5 Apr 2025</td>
+                                                <td>Mental Health Awareness Day</td>
+                                                <td><span class="badge department-badge">Psychology</span></td>
+                                                <td><span class="badge semester-badge">2nd Semester</span></td>
+                                                <td>Psychology Student Association</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                
+                <div class="container-fluid py-4">
+                        <h2 class="mb-4">Upcoming Events</h2>
+                        
+                        <div class="marquee-container">
+                            <div class="marquee-wrapper">
+                                <!-- Original cards -->
+                                <div class="event-card">
+                                    <div class="card">
+                                        <img src="./img/event1.jpg" class="card-img-top" alt="Annual Tech Conference">
+                                        <div class="card-body">
+                                            <h5 class="card-title">Annual Tech Conference</h5>
+                                            <p class="card-text">15 Feb 2025</p>
+                                            <p class="card-text">Main Auditorium</p>
+                                            <a href="#" class="btn btn-white">Details</a>
+                                            <div class="badge-container">
+                                                <span class="badge school-badge">School Event</span>
+                                                <span class="badge semester-badge">2nd Semester</span>
+                                                <span class="badge department-badge">Computer Science</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="event-card">
+                                    <div class="card">
+                                        <img src="./img/event1.jpg" class="card-img-top" alt="Annual Tech Conference">
+                                        <div class="card-body">
+                                            <h5 class="card-title">Annual Tech Conference</h5>
+                                            <p class="card-text">15 Feb 2025</p>
+                                            <p class="card-text">Main Auditorium</p>
+                                            <a href="#" class="btn btn-primary">Details</a>
+                                            <div class="badge-container">
+                                                <span class="badge school-badge">School Event</span>
+                                                <span class="badge semester-badge">2nd Semester</span>
+                                                <span class="badge department-badge">Computer Science</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="event-card">
+                                    <div class="card">
+                                        <img src="./img/event1.jpg" class="card-img-top" alt="Annual Tech Conference">
+                                        <div class="card-body">
+                                            <h5 class="card-title">Annual Tech Conference</h5>
+                                            <p class="card-text">15 Feb 2025</p>
+                                            <p class="card-text">Main Auditorium</p>
+                                            <a href="#" class="btn btn-primary">Details</a>
+                                            <div class="badge-container">
+                                                <span class="badge school-badge">School Event</span>
+                                                <span class="badge semester-badge">2nd Semester</span>
+                                                <span class="badge department-badge">Computer Science</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="event-card">
+                                    <div class="card">
+                                        <img src="./img/event1.jpg" class="card-img-top" alt="Annual Tech Conference">
+                                        <div class="card-body">
+                                            <h5 class="card-title">Annual Tech Conference</h5>
+                                            <p class="card-text">15 Feb 2025</p>
+                                            <p class="card-text">Main Auditorium</p>
+                                            <a href="#" class="btn btn-primary">Details</a>
+                                            <div class="badge-container">
+                                                <span class="badge school-badge">School Event</span>
+                                                <span class="badge semester-badge">2nd Semester</span>
+                                                <span class="badge department-badge">Computer Science</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="event-card">
+                                    <div class="card">
+                                        <img src="./img/event1.jpg" class="card-img-top" alt="Annual Tech Conference">
+                                        <div class="card-body">
+                                            <h5 class="card-title">Annual Tech Conference</h5>
+                                            <p class="card-text">15 Feb 2025</p>
+                                            <p class="card-text">Main Auditorium</p>
+                                            <a href="#" class="btn btn-primary">Details</a>
+                                            <div class="badge-container">
+                                                <span class="badge school-badge">School Event</span>
+                                                <span class="badge semester-badge">2nd Semester</span>
+                                                <span class="badge department-badge">Computer Science</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="event-card">
+                                    <div class="card">
+                                        <img src="./img/event1.jpg" class="card-img-top" alt="Annual Tech Conference">
+                                        <div class="card-body">
+                                            <h5 class="card-title">Annual Tech Conference</h5>
+                                            <p class="card-text">15 Feb 2025</p>
+                                            <p class="card-text">Main Auditorium</p>
+                                            <a href="#" class="btn btn-primary">Details</a>
+                                            <div class="badge-container">
+                                                <span class="badge school-badge">School Event</span>
+                                                <span class="badge semester-badge">2nd Semester</span>
+                                                <span class="badge department-badge">Computer Science</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="event-card">
+                                    <div class="card">
+                                        <img src="./img/event1.jpg" class="card-img-top" alt="Annual Tech Conference">
+                                        <div class="card-body">
+                                            <h5 class="card-title">Annual Tech Conference</h5>
+                                            <p class="card-text">15 Feb 2025</p>
+                                            <p class="card-text">Main Auditorium</p>
+                                            <a href="#" class="btn btn-primary">Details</a>
+                                            <div class="badge-container">
+                                                <span class="badge school-badge">School Event</span>
+                                                <span class="badge semester-badge">2nd Semester</span>
+                                                <span class="badge department-badge">Computer Science</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="event-card">
+                                    <div class="card">
+                                        <img src="./img/event1.jpg" class="card-img-top" alt="Annual Tech Conference">
+                                        <div class="card-body">
+                                            <h5 class="card-title">Annual Tech Conference</h5>
+                                            <p class="card-text">15 Feb 2025</p>
+                                            <p class="card-text">Main Auditorium</p>
+                                            <a href="#" class="btn btn-primary">Details</a>
+                                            <div class="badge-container">
+                                                <span class="badge school-badge">School Event</span>
+                                                <span class="badge semester-badge">2nd Semester</span>
+                                                <span class="badge department-badge">Computer Science</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="event-card">
+                                    <div class="card">
+                                        <img src="./img/event1.jpg" class="card-img-top" alt="Annual Tech Conference">
+                                        <div class="card-body">
+                                            <h5 class="card-title">Annual Tech Conference</h5>
+                                            <p class="card-text">15 Feb 2025</p>
+                                            <p class="card-text">Main Auditorium</p>
+                                            <a href="#" class="btn btn-primary">Details</a>
+                                            <div class="badge-container">
+                                                <span class="badge school-badge">School Event</span>
+                                                <span class="badge semester-badge">2nd Semester</span>
+                                                <span class="badge department-badge">Computer Science</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="event-card">
+                                    <div class="card">
+                                        <img src="./img/event1.jpg" class="card-img-top" alt="Annual Tech Conference">
+                                        <div class="card-body">
+                                            <h5 class="card-title">Annual Tech Conference</h5>
+                                            <p class="card-text">15 Feb 2025</p>
+                                            <p class="card-text">Main Auditorium</p>
+                                            <a href="#" class="btn btn-primary">Details</a>
+                                            <div class="badge-container">
+                                                <span class="badge school-badge">School Event</span>
+                                                <span class="badge semester-badge">2nd Semester</span>
+                                                <span class="badge department-badge">Computer Science</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="event-card">
+                                    <div class="card">
+                                        <img src="./img/event1.jpg" class="card-img-top" alt="Annual Tech Conference">
+                                        <div class="card-body">
+                                            <h5 class="card-title">Annual Tech Conference</h5>
+                                            <p class="card-text">15 Feb 2025</p>
+                                            <p class="card-text">Main Auditorium</p>
+                                            <a href="#" class="btn btn-primary">Details</a>
+                                            <div class="badge-container">
+                                                <span class="badge school-badge">School Event</span>
+                                                <span class="badge semester-badge">2nd Semester</span>
+                                                <span class="badge department-badge">Computer Science</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Duplicate cards for seamless scrolling -->
+                                <!-- Add more cards here with different events -->
+                                
+                                <!-- Clone the original cards at the end for seamless loop -->
+                                <div class="event-card">
+                                    <!-- Clone of first card -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                                
+                 </h6>
+            </main>
+        </div>
+    </div>
+
+     this guy controls the maquette
+    <script>
+        // JavaScript to clone cards for seamless scrolling
+        document.addEventListener('DOMContentLoaded', function() {
+            const wrapper = document.querySelector('.marquee-wrapper');
+            const originalCards = document.querySelectorAll('.event-card');
+            
+            
+            originalCards.forEach(card => {
+                const clone = card.cloneNode(true);
+                wrapper.appendChild(clone);
+            });
+        });
+    </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script src="./javascript/script.js"></script>
+</body>
+
+</html>
